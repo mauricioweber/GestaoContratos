@@ -1,4 +1,4 @@
-﻿@model GestaoContratos.Models.Contract
+﻿@model GestaoContratos.Models.ContractViewModel
 @using GestaoContratos.Models.Enums;
 
 @{
@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ClientName" class="control-label"></label>
@@ -47,10 +47,10 @@
             <div class="form-group">
                 <div>
                     <label asp-for="File" class="control-label"></label>
-                    @if (Model != null && Model.File == null)
+                    @if (Model != null && string.IsNullOrEmpty(Model.FileName))
                     {
                         <a asp-action="DownloadContractFile" asp-route-id="Id">
-                            @Model.File
+                            @Model.FileName
                         </a>
                     }
                     else
@@ -58,9 +58,17 @@
                         <span>Não há arquivo selecionado</span>
                     }
                 </div>
+                @*<input class="form-control" asp-for="File"/>*@
+                @*<input class="form-control" style="height: auto !important" type="file" />*@
 
-                <input class="form-control" style="height: auto !important" type="file" name="contractFile" />
+                <input class="form-control" asp-for="File" style="height: auto !important" type="file"  />
             </div>
+            
+            @*<div class="form-group">
+                <label asp-for="File" class="control-label"> </label>
+                <input class="form-control" asp-for="File"/>
+            </div>*@
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

@@ -1,4 +1,4 @@
-﻿@model GestaoContratos.Models.Contract
+﻿@model GestaoContratos.Models.ContractViewModel
 @using GestaoContratos.Models.Enums;
 @{
     ViewData["Title"] = "Edit";
@@ -48,11 +48,11 @@
                 <div>
                     <label asp-for="File" class="control-label"></label>
                     <a asp-action="DownloadContractFile" asp-route-id="@(Model.Id)">
-                        @(Model.File)
+                        @(Model.FileName)
                     </a>
                 </div>
 
-                <input class="form-control" style="height: auto !important" type="file" name="contractFile" />
+                <input class="form-control" style="height: auto !important" type="file" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

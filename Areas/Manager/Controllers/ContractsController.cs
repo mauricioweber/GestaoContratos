@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +18,17 @@ namespace GestaoContratos.Areas.Contracts.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ContractsController(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public ContractsController(ApplicationDbContext context, IMapper mapper)
         {
+            _mapper = mapper;
             _context = context;
         }
 
         // GET: Contracts/Contracts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Contract.ToListAsync());
+            return View(_mapper.Map<IEnumerable<ContractViewModel>>(await _context.Contract.ToListAsync()));
         }
 
         // GET: Contracts/Contracts/Details/5
@@ -56,15 +60,15 @@ namespace GestaoContratos.Areas.Contracts.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClientName,Type,NegotiatedQuantity,NegotiatedValue,StartDate,Duration,File")] Contract contract)
+        public async Task<IActionResult> Create(ContractViewModel contractViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contract);
+                _context.Add(_mapper.Map<Contract>(contractViewModel));
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(contract);
+            return View(contractViewModel);
         }
 
         // GET: Contracts/Contracts/Edit/5
@@ -80,7 +84,7 @@ namespace GestaoContratos.Areas.Contracts.Controllers
             {
                 return NotFound();
             }
-            return View(contract);
+            return View(_mapper.Map<ContractViewModel>(contract));
         }
 
 
@@ -99,9 +103,9 @@ namespace GestaoContratos.Areas.Contracts.Controllers
                 return NotFound();
             }
 
-            var fileBytes = FileUtils.GetFile(contract.Id.ToString(), contract.File);
+            var fileBytes = contract.File;
 
-            return File(fileBytes, "application/force-download", contract.File);
+            return File(fileBytes, "application/force-download", contract.FileName);
         }
 
 
@@ -110,9 +114,9 @@ namespace GestaoContratos.Areas.Contracts.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ClientName,Type,NegotiatedQuantity,NegotiatedValue,StartDate,Duration,File")] Contract contract, IFormFile contractFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ClientName,Type,NegotiatedQuantity,NegotiatedValue,StartDate,Duration,File")] ContractViewModel contractViewModel)
         {
-            if (id != contract.Id)
+            if (id != contractViewModel.Id)
             {
                 return NotFound();
             }
@@ -121,20 +125,17 @@ namespace GestaoContratos.Areas.Contracts.Controllers
             {
                 try
                 {
-                    if (!FileUtils.TrySaveFile(contract.Id.ToString(), contractFile))
-                    {
-                        return Content("Select a valid file!");
-                    }
+                    
 
-                    contract.File = contractFile.FileName;
+                    
 
-                    _context.Update(contract);
+                    _context.Update(_mapper.Map<Contract>(contractViewModel));
 
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContractExists(contract.Id))
+                    if (!ContractExists(contractViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -145,7 +146,7 @@ namespace GestaoContratos.Areas.Contracts.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(contract);
+            return View(contractViewModel);
         }
 
         // GET: Contracts/Contracts/Delete/5
@@ -163,7 +164,7 @@ namespace GestaoContratos.Areas.Contracts.Controllers
                 return NotFound();
             }
 
-            return View(contract);
+            return View(_mapper.Map<ContractViewModel>(contract));
         }
 
         // POST: Contracts/Contracts/Delete/5

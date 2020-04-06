@@ -1,4 +1,4 @@
-﻿@model GestaoContratos.Models.Contract
+﻿@model GestaoContratos.Models.ContractViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -52,7 +52,7 @@
             @Html.DisplayNameFor(model => model.File)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.File)
+            @Html.DisplayFor(model => model.FileName)
         </dd>
     </dl>
     

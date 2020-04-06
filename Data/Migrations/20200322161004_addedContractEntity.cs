@@ -19,6 +19,7 @@ namespace GestaoContratos.Data.Migrations
                     NegotiatedValue = table.Column<decimal>(nullable: false),
                     StartDate = table.Column<DateTime>(nullable: false),
                     Duration = table.Column<int>(nullable: false),
+                    FileName = table.Column<string>(nullable: false),
                     File = table.Column<byte[]>(nullable: false)
                 },
                 constraints: table =>

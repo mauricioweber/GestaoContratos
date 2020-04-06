@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GestaoContratos.Models.Contract>
+﻿@model IEnumerable<GestaoContratos.Models.ContractViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -32,7 +32,7 @@
                 @Html.DisplayNameFor(model => model.Duration)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.File)
+                @Html.DisplayNameFor(model => model.FileName)
             </th>
             <th></th>
         </tr>
@@ -61,7 +61,7 @@
                 </td>
                 <td>
                     <a asp-action="DownloadContractFile" asp-route-id="@(item.Id)">
-                        @(item.File)
+                        @(item.FileName)
                     </a>
                 </td>
                 <td>
